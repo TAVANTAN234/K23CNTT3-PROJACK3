@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8bb9954d-1308-4be3-b427-2af83b96e788" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../K23CNT3-TaVanTan/src/main/java/K23CNT3_TaVanTan/controller/HomeController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../K23CNT3-TaVanTan/src/main/resources/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k23cnt3.tvtday7/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/k23cnt3.tvtday7/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/java/k23cnt3/tvtday7/Application.java" beforeDir="false" afterPath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/java/k23cnt3/tvtday7/Application.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/java/k23cnt3/tvtday7/controller/TestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/java/k23cnt3/tvtday7/controller/TestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/java/k23cnt3/tvtday7/controller/tvtCategoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/java/k23cnt3/tvtday7/controller/tvtCategoryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/java/k23cnt3/tvtday7/entity/tvtCategory.java" beforeDir="false" afterPath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/java/k23cnt3/tvtday7/entity/tvtCategory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/java/k23cnt3/tvtday7/entity/tvtProduct.java" beforeDir="false" afterPath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/java/k23cnt3/tvtday7/entity/tvtProduct.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/java/k23cnt3/tvtday7/repository/tvtCategoryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/java/k23cnt3/tvtday7/repository/tvtCategoryRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/java/k23cnt3/tvtday7/repository/tvtProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/java/k23cnt3/tvtday7/repository/tvtProductRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/java/k23cnt3/tvtday7/service/tvtCategoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/java/k23cnt3/tvtday7/service/tvtCategoryService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/java/k23cnt3/tvtday7/service/tvtProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/java/k23cnt3/tvtday7/service/tvtProductService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/k23cnt3.tvtday7/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k23cnt3.tvtday7/src/test/java/k23cnt3/tvtday7/ApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/k23cnt3.tvtday7/src/test/java/k23cnt3/tvtday7/ApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k23cnt3.tvtday7/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/k23cnt3.tvtday7/target/classes/application.properties" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="35askrXIXyX9tVnRnnRdGKo8c5G" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Application.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.Application.executor": "Run",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/K23CNTT3-PROJACK3/k23cnt3.lvsday7",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\K23CNT3-LucVanSon-2310900087-TTCD-PRJ3\k23cnt3.lvsday7\k23cnt3.lvsday7\src\main\resources\templates\category" />
+      <recent name="D:\K23CNT3-LucVanSon-2310900087-TTCD-PRJ3\k23cnt3.lvsday7\k23cnt3.lvsday7\src\main\resources\templates\category\category" />
+      <recent name="D:\K23CNT3-LucVanSon-2310900087-TTCD-PRJ3\k23cnt3.lvsday7\k23cnt3.lvsday7\src\main\resources\templates\category\category " />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="GroovyScriptRunConfiguration" factoryName="Groovy">
+      <setting name="path" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workDir" value="file://$PROJECT_DIR$" />
+      <setting name="debug" value="false" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="k23cnt3.lvsday7" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="k23cnt3.tvtday7.Application" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.26830.84" />
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-IU-252.26830.84" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8bb9954d-1308-4be3-b427-2af83b96e788" name="Changes" comment="" />
+      <created>1763359662238</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1763359662238</updated>
+      <workItem from="1763368333035" duration="92000" />
+      <workItem from="1763368446572" duration="368000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
