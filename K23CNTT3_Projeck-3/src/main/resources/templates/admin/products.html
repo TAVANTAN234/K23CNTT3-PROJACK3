@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý sản phẩm</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .nav-link {
+            color: #333;
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .nav-link:hover, .nav-link.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .product-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .action-buttons .btn {
+            margin: 2px;
+        }
+        .table th {
+            background-color: #343a40;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/admin/dashboard">
+            <i class="fas fa-cogs"></i> Admin Panel
+        </a>
+        <div class="navbar-nav ms-auto">
+            <a class="nav-link text-white" href="/">
+                <i class="fas fa-home"></i> Về trang chủ
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/dashboard">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin/products">
+                            <i class="fas fa-box"></i> Quản lý sản phẩm
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/users">
+                            <i class="fas fa-users"></i> Quản lý người dùng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/orders">
+                            <i class="fas fa-shopping-cart"></i> Quản lý đơn hàng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/categories">
+                            <i class="fas fa-tags"></i> Quản lý danh mục
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/reviews">
+                            <i class="fas fa-star"></i> Quản lý đánh giá
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2"><i class="fas fa-box"></i> Quản lý sản phẩm</h1>
+                <a href="/admin/products/add" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Thêm sản phẩm mới
+                </a>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Tìm kiếm sản phẩm..." id="searchInput">
+                                <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="categoryFilter">
+                                <option value="">Tất cả danh mục</option>
+                                <option th:each="category : ${categories}"
+                                        th:value="${category.id}"
+                                        th:text="${category.name}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="stockFilter">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="inStock">Còn hàng</option>
+                                <option value="lowStock">Sắp hết hàng</option>
+                                <option value="outOfStock">Hết hàng</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Danh sách sản phẩm</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Hình ảnh</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Giá</th>
+                                <th>Danh mục</th>
+                                <th>Tồn kho</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="product : ${products}">
+                                <td th:text="${product.id}"></td>
+                                <td>
+                                    <img th:if="${product.imageUrl}"
+                                         th:src="${product.imageUrl}"
+                                         alt="Product Image"
+                                         class="product-img">
+                                    <div th:unless="${product.imageUrl}" class="text-muted">
+                                        <i class="fas fa-image fa-lg"></i>
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong th:text="${product.name}"></strong>
+                                    <br>
+                                    <small class="text-muted" th:text="${product.description} ?: 'Không có mô tả'"></small>
+                                </td>
+                                <td>
+                                            <span class="fw-bold text-success">
+                                                <span th:text="${#numbers.formatCurrency(product.price)}"></span>
+                                            </span>
+                                </td>
+                                <td>
+                                            <span class="badge bg-secondary"
+                                                  th:text="${product.category?.name} ?: 'N/A'">
+                                            </span>
+                                </td>
+                                <!-- Sửa quantity thành stock -->
+                                <td th:text="${product.stock}"></td>
+                                <td>
+                                    <!-- Sửa logic hiển thị trạng thái dựa trên stock -->
+                                    <span class="badge"
+                                          th:classappend="${product.stock > 10} ? 'bg-success' :
+                                                                  (${product.stock > 0} ? 'bg-warning' : 'bg-danger')"
+                                          th:text="${product.stock > 10} ? 'Còn hàng' :
+                                                            (${product.stock > 0} ? 'Sắp hết' : 'Hết hàng')">
+                                            </span>
+                                </td>
+                                <td class="action-buttons">
+                                    <a th:href="@{/admin/products/edit/{id}(id=${product.id})}"
+                                       class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit"></i> Sửa
+                                    </a>
+                                    <a th:href="@{/admin/products/delete/{id}(id=${product.id})}"
+                                       class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')">
+                                        <i class="fas fa-trash"></i> Xóa
+                                    </a>
+                                </td>
+                            </tr>
+                            <!-- Empty state -->
+                            <tr th:if="${products.empty}">
+                                <td colspan="8" class="text-center text-muted py-4">
+                                    <i class="fas fa-box-open fa-3x mb-3"></i>
+                                    <br>
+                                    <h5>Chưa có sản phẩm nào</h5>
+                                    <p>Hãy thêm sản phẩm đầu tiên của bạn</p>
+                                    <a href="/admin/products/add" class="btn btn-primary">
+                                        <i class="fas fa-plus"></i> Thêm sản phẩm
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="row mt-4">
+                <div class="col-md-3">
+                    <div class="card text-white bg-primary">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="card-title">Tổng sản phẩm</h5>
+                                    <h2 th:text="${products.size()}" class="card-text">0</h2>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-box fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="card-title">Còn hàng</h5>
+                                    <!-- Sửa điều kiện thành stock > 10 -->
+                                    <h2 th:text="${#lists.size(#lists.select(products, ${product -> product.stock > 10}))}" class="card-text">0</h2>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-check-circle fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="card-title">Sắp hết hàng</h5>
+                                    <!-- Sửa điều kiện thành 0 < stock <= 10 -->
+                                    <h2 th:text="${#lists.size(#lists.select(products, ${product -> product.stock > 0 && product.stock <= 10}))}" class="card-text">0</h2>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-danger">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="card-title">Hết hàng</h5>
+                                    <!-- Sửa điều kiện thành stock == 0 -->
+                                    <h2 th:text="${#lists.size(#lists.select(products, ${product -> product.stock == 0}))}" class="card-text">0</h2>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-times-circle fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">Trước</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Tiếp</a>
+                    </li>
+                </ul>
+            </nav>
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Simple search functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const stockFilter = document.getElementById('stockFilter');
+
+        function filterProducts() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const categoryValue = categoryFilter.value;
+            const stockValue = stockFilter.value;
+
+            const rows = document.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                if (row.cells.length < 8) return; // Skip empty row
+
+                const productName = row.cells[2].querySelector('strong').textContent.toLowerCase();
+                const category = row.cells[4].textContent.trim();
+                const stockText = row.cells[6].textContent.trim();
+
+                let showRow = true;
+
+                // Filter by search term
+                if (searchTerm && !productName.includes(searchTerm)) {
+                    showRow = false;
+                }
+
+                // Filter by category (assuming the category badge contains the category name)
+                if (categoryValue && category !== categoryValue) {
+                    showRow = false;
+                }
+
+                // Filter by stock status
+                if (stockValue) {
+                    let expectedStatus;
+                    if (stockValue === 'inStock') {
+                        expectedStatus = 'Còn hàng';
+                    } else if (stockValue === 'lowStock') {
+                        expectedStatus = 'Sắp hết';
+                    } else if (stockValue === 'outOfStock') {
+                        expectedStatus = 'Hết hàng';
+                    }
+                    if (stockText !== expectedStatus) {
+                        showRow = false;
+                    }
+                }
+
+                row.style.display = showRow ? '' : 'none';
+            });
+        }
+
+        searchButton.addEventListener('click', filterProducts);
+        categoryFilter.addEventListener('change', filterProducts);
+        stockFilter.addEventListener('change', filterProducts);
+
+        // Enter key search
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                filterProducts();
+            }
+        });
+    });
+</script>
+</body>
+</html>

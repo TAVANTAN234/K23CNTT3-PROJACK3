@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Annotation profile for k23cnt3.lvsday7" enabled="true">
+        <sourceOutputDir name="../../k23cnt3.lvsday7/k23cnt3.lvsday7/target/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../k23cnt3.lvsday7/k23cnt3.lvsday7/target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="k23cnt3.lvsday7" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="k23cnt3.lvsday7" options="-parameters" />
+    </option>
+  </component>
+</project>
