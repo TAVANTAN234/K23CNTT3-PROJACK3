@@ -62,6 +62,78 @@
             width: 100%;
         }
 
+        /* Style cho dropdown user */
+        .nav-item.dropdown .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.dropdown .nav-link:hover {
+            color: white !important;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 10px 0;
+            min-width: 200px;
+        }
+
+        .dropdown-item {
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: rgba(255, 71, 87, 0.1);
+            color: var(--primary);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Animation cho dropdown */
+        .dropdown-menu {
+            animation: fadeInDown 0.3s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* User badge */
+        .user-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin-left: 10px;
+        }
+
+        .user-badge i {
+            margin-right: 8px;
+        }
+
+        /* Navbar align items */
+        .navbar-nav.align-items-center {
+            display: flex;
+            align-items: center;
+        }
+
         /* Cart Section */
         .cart-section {
             padding: 80px 0;
@@ -406,6 +478,22 @@
     </style>
 </head>
 <body>
+<!-- DEBUG INFO - Có thể xóa sau khi kiểm tra -->
+<div style="position: fixed; bottom: 10px; right: 10px; z-index: 9999;
+            background: rgba(0,0,0,0.8); color: white; padding: 10px;
+            border-radius: 5px; font-size: 12px; max-width: 300px;">
+    <strong>Debug Session:</strong><br>
+    <span th:if="${session.currentUser != null}">
+        ✅ Đã đăng nhập<br>
+        👤 User: <span th:text="${session.currentUser.name}"></span><br>
+        📧 Email: <span th:text="${session.currentUser.email}"></span><br>
+        👑 Role: <span th:text="${session.currentUser.role}"></span>
+    </span>
+    <span th:unless="${session.currentUser != null}">
+        ❌ Chưa đăng nhập
+    </span>
+</div>
+
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container">
@@ -424,17 +512,46 @@
                     <a class="nav-link" href="/products">Sản phẩm</a>
                 </li>
             </ul>
-            <ul class="navbar-nav">
+            <ul class="navbar-nav align-items-center">
                 <li class="nav-item">
                     <a class="nav-link active" href="/cart">
                         <i class="fas fa-shopping-cart me-1"></i>Giỏ hàng
-                        <span class="badge bg-primary ms-1" id="cart-count" th:text="${cart.cartItems.size()}">0</span>
+                        <span class="badge bg-primary ms-1" id="cart-count" th:text="${cart != null ? cart.cartItems.size() : 0}">0</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/users/login">Đăng nhập</a>
+
+                <!-- HIỂN THỊ KHI ĐÃ ĐĂNG NHẬP -->
+                <li class="nav-item dropdown" th:if="${session.currentUser != null}">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle me-2"></i>
+                        <span th:text="${session.currentUser.name}">Người dùng</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/users/profile">
+                            <i class="fas fa-user me-2"></i>Hồ sơ cá nhân
+                        </a></li>
+                        <li th:if="${session.currentUser.role.name() == 'ADMIN'}">
+                            <a class="dropdown-item" href="/admin/dashboard">
+                                <i class="fas fa-cog me-2"></i>Quản trị
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="/users/logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                        </a></li>
+                    </ul>
                 </li>
 
+                <!-- HIỂN THỊ KHI CHƯA ĐĂNG NHẬP -->
+                <div th:unless="${session.currentUser != null}" class="d-flex align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/users/login">Đăng nhập</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/users/register">Đăng ký</a>
+                    </li>
+                </div>
             </ul>
         </div>
     </div>
@@ -445,7 +562,7 @@
     <div class="container">
         <h1 class="page-title">Giỏ hàng của bạn</h1>
 
-        <div th:if="${cart.cartItems.isEmpty()}">
+        <div th:if="${cart == null || cart.cartItems.isEmpty()}">
             <div class="cart-container">
                 <div class="empty-cart">
                     <div class="empty-cart-icon">
@@ -459,7 +576,7 @@
             </div>
         </div>
 
-        <div th:unless="${cart.cartItems.isEmpty()}">
+        <div th:unless="${cart == null || cart.cartItems.isEmpty()}">
             <div class="row">
                 <div class="col-lg-8">
                     <div class="cart-container">
@@ -477,14 +594,17 @@
                                 </div>
 
                                 <div class="cart-item-quantity">
-                                    <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
-                                    <input type="number" class="quantity-input" th:value="${item.quantity}" min="1" th:id="'quantity-' + ${item.product.id}" onchange="updateQuantityFromInput(this)">
-                                    <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
+                                    <button class="quantity-btn" onclick="updateQuantity(this, -1, ${item.product.id})">-</button>
+                                    <input type="number" class="quantity-input" th:value="${item.quantity}" min="1"
+                                           th:id="'quantity-' + ${item.product.id}"
+                                           onchange="updateQuantityFromInput(this, ${item.product.id})">
+                                    <button class="quantity-btn" onclick="updateQuantity(this, 1, ${item.product.id})">+</button>
                                 </div>
 
-                                <div class="cart-item-subtotal" th:id="'subtotal-' + ${item.product.id}" th:text="${'$' + item.getSubtotal()}">Subtotal</div>
+                                <div class="cart-item-subtotal" th:id="'subtotal-' + ${item.product.id}"
+                                     th:text="${'$' + (item.quantity * item.product.price)}">Subtotal</div>
 
-                                <button class="btn-remove" th:onclick="'removeItem(' + ${item.product.id} + ')'" title="Xóa sản phẩm">
+                                <button class="btn-remove" onclick="removeItem(${item.product.id})" title="Xóa sản phẩm">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -498,7 +618,8 @@
 
                         <div class="summary-row">
                             <span class="summary-label">Tạm tính:</span>
-                            <span class="summary-value" id="subtotal-summary" th:text="${'$' + cart.getTotalPrice()}">Total</span>
+                            <span class="summary-value" id="subtotal-summary"
+                                  th:text="${'$' + (cart != null ? cart.getTotalPrice() : 0)}">Total</span>
                         </div>
 
                         <div class="summary-row">
@@ -513,10 +634,11 @@
 
                         <div class="summary-row">
                             <span class="summary-label">Tổng cộng:</span>
-                            <span class="summary-value summary-total" id="total-summary" th:text="${'$' + cart.getTotalPrice()}">Total</span>
+                            <span class="summary-value summary-total" id="total-summary"
+                                  th:text="${'$' + (cart != null ? cart.getTotalPrice() : 0)}">Total</span>
                         </div>
 
-                        <a th:href="@{/cart/checkout}" class="btn btn-checkout">
+                        <a th:href="@{/checkout}" class="btn btn-checkout">
                             <i class="fas fa-credit-card me-2"></i>Tiến hành thanh toán
                         </a>
 
@@ -565,8 +687,8 @@
     });
 
     // Xử lý tăng/giảm số lượng sản phẩm
-    function updateQuantity(button, change) {
-        const input = button.parentElement.querySelector('.quantity-input');
+    function updateQuantity(button, change, productId) {
+        const input = document.getElementById(`quantity-${productId}`);
         let value = parseInt(input.value);
 
         if (change > 0) {
@@ -578,23 +700,33 @@
         }
 
         input.value = value;
-        updateSubtotal(input);
+        updateSubtotal(productId);
         updateCartSummary();
+
+        // Gửi request đến server để cập nhật số lượng
+        updateCartOnServer(productId, value);
     }
 
-    function updateQuantityFromInput(input) {
-        if (input.value < 1) {
+    function updateQuantityFromInput(input, productId) {
+        let value = parseInt(input.value);
+        if (value < 1) {
+            value = 1;
             input.value = 1;
         }
-        updateSubtotal(input);
+        updateSubtotal(productId);
         updateCartSummary();
+
+        // Gửi request đến server để cập nhật số lượng
+        updateCartOnServer(productId, value);
     }
 
     // Cập nhật tổng tiền cho từng sản phẩm
-    function updateSubtotal(input) {
-        const productId = input.id.split('-')[1];
-        const priceText = document.querySelector(`#cart-item-${productId} .cart-item-price`).textContent;
+    function updateSubtotal(productId) {
+        const priceElement = document.querySelector(`#cart-item-${productId} .cart-item-price`);
+        const priceText = priceElement.textContent;
         const price = parseFloat(priceText.replace('$', ''));
+
+        const input = document.getElementById(`quantity-${productId}`);
         const quantity = parseInt(input.value);
         const subtotal = price * quantity;
 
@@ -616,35 +748,60 @@
     }
 
     // Xóa sản phẩm khỏi giỏ hàng
-    function removeItem(productId) {
+    async function removeItem(productId) {
         if (confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?')) {
-            const itemElement = document.getElementById(`cart-item-${productId}`);
+            try {
+                // Gửi request đến server để xóa sản phẩm
+                const response = await fetch(`/cart/remove/${productId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
 
-            // Thêm hiệu ứng fade-out
-            itemElement.classList.add('fade-out');
+                if (response.ok) {
+                    const itemElement = document.getElementById(`cart-item-${productId}`);
 
-            // Xóa sản phẩm sau khi hiệu ứng hoàn thành
-            setTimeout(() => {
-                itemElement.remove();
+                    // Thêm hiệu ứng fade-out
+                    itemElement.classList.add('fade-out');
 
-                // Cập nhật tổng tiền
-                updateCartSummary();
+                    // Xóa sản phẩm sau khi hiệu ứng hoàn thành
+                    setTimeout(() => {
+                        itemElement.remove();
 
-                // Cập nhật số lượng sản phẩm trong giỏ hàng
-                updateCartCount();
+                        // Cập nhật tổng tiền
+                        updateCartSummary();
 
-                // Kiểm tra nếu giỏ hàng trống
-                checkEmptyCart();
-            }, 500);
+                        // Cập nhật số lượng sản phẩm trong giỏ hàng
+                        updateCartCount();
 
-            // Ở đây có thể thêm logic gửi request đến server để xóa sản phẩm
-            // fetch(`/cart/remove/${productId}`, { method: 'POST' })
-            //   .then(response => {
-            //       if (!response.ok) {
-            //           // Xử lý lỗi nếu cần
-            //       }
-            //   })
-            //   .catch(error => console.error('Error:', error));
+                        // Kiểm tra nếu giỏ hàng trống
+                        checkEmptyCart();
+                    }, 500);
+                } else {
+                    alert('Có lỗi xảy ra khi xóa sản phẩm. Vui lòng thử lại.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi xóa sản phẩm.');
+            }
+        }
+    }
+
+    // Cập nhật số lượng trên server
+    async function updateCartOnServer(productId, quantity) {
+        try {
+            await fetch(`/cart/update/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ quantity: quantity })
+            });
+        } catch (error) {
+            console.error('Error updating cart:', error);
         }
     }
 

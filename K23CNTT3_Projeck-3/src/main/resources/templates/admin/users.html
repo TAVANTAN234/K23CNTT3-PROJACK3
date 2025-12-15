@@ -6,150 +6,656 @@
     <title>Quản lý người dùng</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --success-color: #1cc88a;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --info-color: #36b9cc;
+        }
+
+        body {
+            background-color: #f8f9fc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .user-text {
+            text-align: right;
+        }
+
+        .user-name {
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 2px;
+        }
+
+        .user-role {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+        }
+
+        .navbar-brand.hidden {
+            display: none;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2e59d9 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.3);
+        }
+
+        .stat-card {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            transition: transform 0.3s ease;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .filter-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            overflow: hidden;
+        }
+
+        .table th {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-color: #e3e6f0;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(78, 115, 223, 0.05);
+        }
+
+        .user-table-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e3e6f0;
+        }
+
+        .user-table-avatar.small {
+            width: 35px;
+            height: 35px;
+        }
+
+        .role-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .role-admin {
+            background-color: rgba(231, 74, 59, 0.2);
+            color: var(--danger-color);
+        }
+
+        .role-user {
+            background-color: rgba(78, 115, 223, 0.2);
+            color: var(--primary-color);
+        }
+
+        .role-staff {
+            background-color: rgba(28, 200, 138, 0.2);
+            color: var(--success-color);
+        }
+
+        .role-moderator {
+            background-color: rgba(54, 185, 204, 0.2);
+            color: var(--info-color);
+        }
+
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: rgba(28, 200, 138, 0.2);
+            color: var(--success-color);
+        }
+
+        .status-inactive {
+            background-color: rgba(246, 194, 62, 0.2);
+            color: var(--warning-color);
+        }
+
+        .status-pending {
+            background-color: rgba(108, 117, 125, 0.2);
+            color: #6c757d;
+        }
+
+        .status-banned {
+            background-color: rgba(231, 74, 59, 0.2);
+            color: var(--danger-color);
+        }
+
+        .action-buttons .btn {
+            border-radius: 8px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .btn-group-custom .btn {
+            margin: 0 2px;
+        }
+
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 1px solid #e3e6f0;
+            padding: 0.75rem 1rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+
+        .pagination .page-item .page-link {
+            border-radius: 8px;
+            margin: 0 2px;
+            border: none;
+            color: var(--primary-color);
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .user-email {
+            color: #2e59d9;
+            font-weight: 500;
+        }
+
+        .user-phone {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .user-join-date {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        @media (max-width: 768px) {
+            .user-text {
+                display: none;
+            }
+
+            .page-header {
+                padding: 1.5rem 1rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .action-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .user-table-avatar {
+                width: 35px;
+                height: 35px;
+            }
+        }
+    </style>
 </head>
 <body>
 <!-- Header -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" th:href="@{/admin/dashboard}">
+        <a class="navbar-brand hidden" href="#">
             <i class="fas fa-cogs"></i> Admin Panel
         </a>
-        <div class="navbar-nav ms-auto">
-            <a class="nav-link text-white" th:href="@{/}">
-                <i class="fas fa-home"></i> Về trang chủ
-            </a>
+        <div class="ms-auto">
+            <div class="user-info">
+                <div class="user-text">
+                    <div class="user-name">Administrator</div>
+                    <div class="user-role">Quản trị viên</div>
+                </div>
+                <div class="user-avatar">
+                    <i class="fas fa-user-shield text-white"></i>
+                </div>
+            </div>
         </div>
     </div>
 </nav>
 
 <div class="container-fluid mt-4">
     <div class="row">
-        <!-- Sidebar -->
-        <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-            <div class="position-sticky pt-3">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/admin/dashboard}">
-                            <i class="fas fa-tachometer-alt"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/admin/products}">
-                            <i class="fas fa-box"></i> Quản lý sản phẩm
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/admin/users}">
-                            <i class="fas fa-users"></i> Quản lý người dùng
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/admin/orders}">
-                            <i class="fas fa-shopping-cart"></i> Quản lý đơn hàng
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/admin/categories}">
-                            <i class="fas fa-tags"></i> Quản lý danh mục
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/admin/reviews}">
-                            <i class="fas fa-star"></i> Quản lý đánh giá
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+        <!-- Sử dụng sidebar chung -->
+        <div th:replace="admin/sidebar :: sidebar"></div>
 
         <!-- Main content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2"><i class="fas fa-users"></i> Quản lý người dùng</h1>
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="h2 mb-0"><i class="fas fa-users me-2"></i>Quản lý người dùng</h1>
+                        <p class="mb-0 mt-2 opacity-75">Quản lý và phân quyền người dùng trong hệ thống</p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                            <i class="fas fa-user-plus me-2"></i>Thêm người dùng mới
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Tổng người dùng
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">1,248</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-users fa-2x text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Người dùng mới (30 ngày)
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">156</div>
+                                    <div class="text-success small">
+                                        <i class="fas fa-arrow-up me-1"></i>12.5%
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-user-plus fa-2x text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Người dùng hoạt động
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">1,089</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-user-check fa-2x text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Tỉ lệ hoạt động
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">87.3%</div>
+                                    <div class="text-success small">
+                                        <i class="fas fa-arrow-up me-1"></i>2.4%
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-chart-line fa-2x text-info"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="card filter-card mb-4">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <label class="form-label fw-bold">Tìm kiếm người dùng</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" id="searchInput" placeholder="Tên, email, số điện thoại...">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold">Vai trò</label>
+                            <select class="form-select" id="roleFilter">
+                                <option value="">Tất cả vai trò</option>
+                                <option value="ADMIN">Quản trị viên</option>
+                                <option value="MODERATOR">Điều hành viên</option>
+                                <option value="STAFF">Nhân viên</option>
+                                <option value="USER">Người dùng</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold">Trạng thái</label>
+                            <select class="form-select" id="statusFilter">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="ACTIVE">Đang hoạt động</option>
+                                <option value="INACTIVE">Ngừng hoạt động</option>
+                                <option value="PENDING">Chờ xác nhận</option>
+                                <option value="BANNED">Đã khóa</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button class="btn btn-outline-secondary w-100" id="resetFilters">
+                                <i class="fas fa-redo me-1"></i>Đặt lại
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Users Table -->
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Danh sách người dùng</h5>
+            <div class="table-container">
+                <div class="card-header bg-white border-bottom-0 py-3">
+                    <h5 class="card-title mb-0 fw-bold">
+                        <i class="fas fa-list me-2"></i>Danh sách người dùng
+                        <span class="badge bg-primary ms-2">1,248</span>
+                    </h5>
                 </div>
-                <div class="card-body">
+
+                <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <thead class="table-dark">
+                        <table class="table table-hover mb-0" id="usersTable">
+                            <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Tên</th>
-                                <th>Email</th>
-                                <th>Số điện thoại</th>
-                                <th>Địa chỉ</th>
-                                <th>Vai trò</th>
-                                <th>Hành động</th>
+                                <th width="60">ID</th>
+                                <th width="80">Ảnh đại diện</th>
+                                <th width="200">Thông tin</th>
+                                <th width="150">Liên hệ</th>
+                                <th width="120">Vai trò</th>
+                                <th width="120">Trạng thái</th>
+                                <th width="120">Ngày tham gia</th>
+                                <th width="140" class="text-center">Hành động</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="user : ${users}">
-                                <td th:text="${user.id}"></td>
-                                <!-- SỬA: user.username thành user.name -->
-                                <td th:text="${user.name}"></td>
-                                <td th:text="${user.email}"></td>
-                                <td th:text="${user.phone ?: 'N/A'}"></td>
-                                <td th:text="${user.address ?: 'N/A'}"></td>
+                            <!-- Example User 1 -->
+                            <tr>
+                                <td class="fw-bold">#001</td>
                                 <td>
-                                            <span class="badge"
-                                                  th:classappend="${user.role == 'ADMIN'} ? 'bg-danger' : 'bg-primary'"
-                                                  th:text="${user.role}">
-                                            </span>
+                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face"
+                                         class="user-table-avatar"
+                                         alt="Nguyễn Văn A">
                                 </td>
                                 <td>
-                                    <a th:href="@{/admin/users/edit/{id}(id=${user.id})}"
-                                       class="btn btn-warning btn-sm">
-                                        <i class="fas fa-edit"></i> Sửa
-                                    </a>
-                                    <a th:href="@{/admin/users/delete/{id}(id=${user.id})}"
-                                       class="btn btn-danger btn-sm"
-                                       onclick="return confirm('Bạn có chắc chắn muốn xóa người dùng này?')">
-                                        <i class="fas fa-trash"></i> Xóa
-                                    </a>
+                                    <div class="fw-bold">Nguyễn Văn A</div>
+                                    <div class="text-muted small">@nguyenvana</div>
+                                </td>
+                                <td>
+                                    <div class="user-email">nguyenvana@example.com</div>
+                                    <div class="user-phone">0912 345 678</div>
+                                </td>
+                                <td>
+                                        <span class="role-badge role-admin">
+                                            <i class="fas fa-crown me-1"></i>ADMIN
+                                        </span>
+                                </td>
+                                <td>
+                                        <span class="status-badge status-active">
+                                            <i class="fas fa-circle me-1"></i>Đang hoạt động
+                                        </span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">15/01/2024</div>
+                                    <div class="user-join-date">3 tháng trước</div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group-custom">
+                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editUserModal">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-warning btn-sm">
+                                            <i class="fas fa-lock"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
-                            <!-- Thêm dòng này khi không có user -->
-                            <tr th:if="${users.empty}">
-                                <td colspan="7" class="text-center text-muted">
-                                    <i class="fas fa-users fa-2x mb-2"></i><br>
-                                    Chưa có người dùng nào
+
+                            <!-- Example User 2 -->
+                            <tr>
+                                <td class="fw-bold">#002</td>
+                                <td>
+                                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face"
+                                         class="user-table-avatar"
+                                         alt="Trần Thị B">
+                                </td>
+                                <td>
+                                    <div class="fw-bold">Trần Thị B</div>
+                                    <div class="text-muted small">@tranthib</div>
+                                </td>
+                                <td>
+                                    <div class="user-email">tranthib@example.com</div>
+                                    <div class="user-phone">0923 456 789</div>
+                                </td>
+                                <td>
+                                        <span class="role-badge role-user">
+                                            <i class="fas fa-user me-1"></i>USER
+                                        </span>
+                                </td>
+                                <td>
+                                        <span class="status-badge status-inactive">
+                                            <i class="fas fa-circle me-1"></i>Ngừng hoạt động
+                                        </span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">20/01/2024</div>
+                                    <div class="user-join-date">3 tháng trước</div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group-custom">
+                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editUserModal">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-success btn-sm">
+                                            <i class="fas fa-unlock"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Example User 3 -->
+                            <tr>
+                                <td class="fw-bold">#003</td>
+                                <td>
+                                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face"
+                                         class="user-table-avatar"
+                                         alt="Lê Văn C">
+                                </td>
+                                <td>
+                                    <div class="fw-bold">Lê Văn C</div>
+                                    <div class="text-muted small">@levanc</div>
+                                </td>
+                                <td>
+                                    <div class="user-email">levanc@example.com</div>
+                                    <div class="user-phone">0934 567 890</div>
+                                </td>
+                                <td>
+                                        <span class="role-badge role-staff">
+                                            <i class="fas fa-user-tie me-1"></i>STAFF
+                                        </span>
+                                </td>
+                                <td>
+                                        <span class="status-badge status-active">
+                                            <i class="fas fa-circle me-1"></i>Đang hoạt động
+                                        </span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">05/02/2024</div>
+                                    <div class="user-join-date">2 tháng trước</div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group-custom">
+                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editUserModal">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-warning btn-sm">
+                                            <i class="fas fa-lock"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Example User 4 -->
+                            <tr>
+                                <td class="fw-bold">#004</td>
+                                <td>
+                                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face"
+                                         class="user-table-avatar"
+                                         alt="Phạm Thị D">
+                                </td>
+                                <td>
+                                    <div class="fw-bold">Phạm Thị D</div>
+                                    <div class="text-muted small">@phamthid</div>
+                                </td>
+                                <td>
+                                    <div class="user-email">phamthid@example.com</div>
+                                    <div class="user-phone">0945 678 901</div>
+                                </td>
+                                <td>
+                                        <span class="role-badge role-moderator">
+                                            <i class="fas fa-user-shield me-1"></i>MODERATOR
+                                        </span>
+                                </td>
+                                <td>
+                                        <span class="status-badge status-pending">
+                                            <i class="fas fa-clock me-1"></i>Chờ xác nhận
+                                        </span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">15/03/2024</div>
+                                    <div class="user-join-date">1 tháng trước</div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group-custom">
+                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editUserModal">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-success btn-sm">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </div>
 
-            <!-- Statistics -->
-            <div class="row mt-4">
-                <div class="col-md-3">
-                    <div class="card text-white bg-primary">
-                        <div class="card-body">
-                            <h5 class="card-title">Tổng người dùng</h5>
-                            <h2 th:text="${users.size()}" class="card-text">0</h2>
+                <!-- Pagination -->
+                <div class="card-footer bg-white border-top-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-muted">
+                            Hiển thị <span class="fw-bold">1-4</span> trong tổng số <span class="fw-bold">1,248</span> người dùng
                         </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card text-white bg-success">
-                        <div class="card-body">
-                            <h5 class="card-title">Admin</h5>
-                            <h2 th:text="${#lists.size(#lists.select(users, ${user -> user.role.name() == 'ADMIN'}))}" class="card-text">0</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card text-white bg-info">
-                        <div class="card-body">
-                            <h5 class="card-title">User</h5>
-                            <h2 th:text="${#lists.size(#lists.select(users, ${user -> user.role.name() == 'USER'}))}" class="card-text">0</h2>
-                        </div>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">4</a></li>
+                                <li class="page-item"><a class="page-link" href="#">5</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -157,6 +663,262 @@
     </div>
 </div>
 
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-user-plus me-2"></i>Thêm người dùng mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Họ và tên <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Tên đăng nhập</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Số điện thoại</label>
+                            <input type="tel" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Mật khẩu <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Vai trò <span class="text-danger">*</span></label>
+                            <select class="form-select" required>
+                                <option value="">Chọn vai trò</option>
+                                <option value="ADMIN">Quản trị viên</option>
+                                <option value="MODERATOR">Điều hành viên</option>
+                                <option value="STAFF">Nhân viên</option>
+                                <option value="USER">Người dùng</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Trạng thái <span class="text-danger">*</span></label>
+                            <select class="form-select" required>
+                                <option value="ACTIVE">Đang hoạt động</option>
+                                <option value="INACTIVE">Ngừng hoạt động</option>
+                                <option value="PENDING">Chờ xác nhận</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Địa chỉ</label>
+                            <textarea class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="sendWelcomeEmail">
+                                <label class="form-check-label" for="sendWelcomeEmail">
+                                    Gửi email chào mừng đến người dùng
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Tạo người dùng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Chỉnh sửa người dùng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Họ và tên</label>
+                            <input type="text" class="form-control" value="Nguyễn Văn A">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Email</label>
+                            <input type="email" class="form-control" value="nguyenvana@example.com">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Tên đăng nhập</label>
+                            <input type="text" class="form-control" value="@nguyenvana">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Số điện thoại</label>
+                            <input type="tel" class="form-control" value="0912345678">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Vai trò</label>
+                            <select class="form-select">
+                                <option value="ADMIN" selected>Quản trị viên</option>
+                                <option value="MODERATOR">Điều hành viên</option>
+                                <option value="STAFF">Nhân viên</option>
+                                <option value="USER">Người dùng</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Trạng thái</label>
+                            <select class="form-select">
+                                <option value="ACTIVE" selected>Đang hoạt động</option>
+                                <option value="INACTIVE">Ngừng hoạt động</option>
+                                <option value="PENDING">Chờ xác nhận</option>
+                                <option value="BANNED">Đã khóa</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Địa chỉ</label>
+                            <textarea class="form-control" rows="2">123 Đường ABC, Quận XYZ, TP.HCM</textarea>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="resetPassword">
+                                <label class="form-check-label" for="resetPassword">
+                                    Đặt lại mật khẩu (mật khẩu mới sẽ được gửi qua email)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa người dùng này?</p>
+                <p class="text-muted small">Hành động này không thể hoàn tác. Tất cả dữ liệu liên quan đến người dùng sẽ bị xóa vĩnh viễn.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger">Xóa người dùng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Initialize DataTable
+        $('#usersTable').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json'
+            },
+            pageLength: 10,
+            responsive: true,
+            order: [[0, 'desc']],
+            columnDefs: [
+                { orderable: false, targets: [1, 7] }
+            ]
+        });
+
+        // Filter functionality
+        $('#searchInput').on('keyup', function() {
+            $('#usersTable').DataTable().search($(this).val()).draw();
+        });
+
+        $('#roleFilter, #statusFilter').on('change', function() {
+            $('#usersTable').DataTable().draw();
+        });
+
+        $('#resetFilters').on('click', function() {
+            $('#searchInput').val('');
+            $('#roleFilter').val('');
+            $('#statusFilter').val('');
+            $('#usersTable').DataTable().search('').draw();
+        });
+
+        // Edit modal data population
+        $('#editUserModal').on('show.bs.modal', function(event) {
+            const button = $(event.relatedTarget);
+            const row = button.closest('tr');
+            const userName = row.find('td:nth-child(3) .fw-bold').text();
+            const userEmail = row.find('.user-email').text();
+            const userPhone = row.find('.user-phone').text();
+            const userRole = row.find('.role-badge').text().trim();
+            const userStatus = row.find('.status-badge').text().replace('Đang hoạt động', 'ACTIVE')
+                .replace('Ngừng hoạt động', 'INACTIVE')
+                .replace('Chờ xác nhận', 'PENDING')
+                .replace('Đã khóa', 'BANNED')
+                .trim();
+
+            // In real app, you would populate all fields from the database
+            $(this).find('input[type="text"]').first().val(userName);
+            $(this).find('input[type="email"]').val(userEmail);
+            $(this).find('input[type="tel"]').val(userPhone.replace(/\s/g, ''));
+            $(this).find('select').first().val(userRole);
+            $(this).find('select').last().val(userStatus);
+        });
+
+        // Form submission handling
+        $('form').on('submit', function(e) {
+            e.preventDefault();
+            // In real app, submit via AJAX
+            alert('Thao tác thành công!');
+            $('#addUserModal, #editUserModal').modal('hide');
+        });
+
+        // Hover effect on user rows
+        $('#usersTable tbody tr').hover(
+            function() {
+                $(this).css('transform', 'translateX(5px)');
+            },
+            function() {
+                $(this).css('transform', 'translateX(0)');
+            }
+        );
+
+        // User status toggle buttons
+        $('.btn-outline-warning').on('click', function() {
+            const row = $(this).closest('tr');
+            const userName = row.find('td:nth-child(3) .fw-bold').text();
+            if(confirm(`Bạn có chắc muốn khóa tài khoản của "${userName}"?`)) {
+                alert(`Đã khóa tài khoản ${userName}`);
+            }
+        });
+
+        $('.btn-outline-success').on('click', function() {
+            const row = $(this).closest('tr');
+            const userName = row.find('td:nth-child(3) .fw-bold').text();
+            if(confirm(`Bạn có chắc muốn mở khóa tài khoản của "${userName}"?`)) {
+                alert(`Đã mở khóa tài khoản ${userName}`);
+            }
+        });
+    });
+</script>
 </body>
 </html>

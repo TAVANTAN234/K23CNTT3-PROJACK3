@@ -6,117 +6,486 @@
     <title>Quản lý danh mục</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --success-color: #1cc88a;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --info-color: #36b9cc;
+        }
+
+        body {
+            background-color: #f8f9fc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .user-text {
+            text-align: right;
+        }
+
+        .user-name {
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 2px;
+        }
+
+        .user-role {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+        }
+
+        .navbar-brand.hidden {
+            display: none;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2e59d9 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.3);
+        }
+
+        .category-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            transition: transform 0.3s ease;
+            overflow: hidden;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .category-card .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+        }
+
+        .category-table th {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        .category-table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-color: #e3e6f0;
+        }
+
+        .category-table tbody tr:hover {
+            background-color: rgba(78, 115, 223, 0.05);
+        }
+
+        .category-badge {
+            background-color: rgba(54, 185, 204, 0.2);
+            color: var(--info-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .product-count-badge {
+            background-color: rgba(28, 200, 138, 0.2);
+            color: var(--success-color);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .action-buttons .btn {
+            border-radius: 8px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .btn-group-custom .btn {
+            margin: 0 2px;
+        }
+
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 1px solid #e3e6f0;
+            padding: 0.75rem 1rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+
+        .empty-state {
+            padding: 3rem;
+            text-align: center;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #e3e6f0;
+            margin-bottom: 1rem;
+        }
+
+        .category-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin-right: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .user-text {
+                display: none;
+            }
+
+            .page-header {
+                padding: 1.5rem 1rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .action-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
 </head>
 <body>
 <!-- Header -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" th:href="@{/admin/dashboard}">
+        <a class="navbar-brand hidden" href="#">
             <i class="fas fa-cogs"></i> Admin Panel
         </a>
-        <div class="navbar-nav ms-auto">
-            <a class="nav-link text-white" th:href="@{/}">
-                <i class="fas fa-home"></i> Về trang chủ
-            </a>
+        <div class="ms-auto">
+            <div class="user-info">
+                <div class="user-text">
+                    <div class="user-name">Administrator</div>
+                    <div class="user-role">Quản trị viên</div>
+                </div>
+                <div class="user-avatar">
+                    <i class="fas fa-user-shield text-white"></i>
+                </div>
+            </div>
         </div>
     </div>
 </nav>
 
 <div class="container-fluid mt-4">
     <div class="row">
-        <!-- Sidebar -->
-        <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-            <div class="position-sticky pt-3">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/admin/dashboard}">
-                            <i class="fas fa-tachometer-alt"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/admin/products}">
-                            <i class="fas fa-box"></i> Quản lý sản phẩm
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/admin/users}">
-                            <i class="fas fa-users"></i> Quản lý người dùng
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/admin/orders}">
-                            <i class="fas fa-shopping-cart"></i> Quản lý đơn hàng
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/admin/categories}">
-                            <i class="fas fa-tags"></i> Quản lý danh mục
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/admin/reviews}">
-                            <i class="fas fa-star"></i> Quản lý đánh giá
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+        <!-- Sử dụng sidebar chung -->
+        <div th:replace="admin/sidebar :: sidebar"></div>
 
         <!-- Main content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2"><i class="fas fa-tags"></i> Quản lý danh mục</h1>
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="h2 mb-0"><i class="fas fa-tags me-2"></i>Quản lý danh mục</h1>
+                        <p class="mb-0 mt-2 opacity-75">Tổ chức và quản lý các danh mục sản phẩm trong hệ thống</p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                            <i class="fas fa-plus me-2"></i>Thêm danh mục mới
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <!-- Add Category Form -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Thêm danh mục mới</h5>
+            <!-- Statistics -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card category-card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Tổng danh mục
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${categories.size()}">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-tags fa-2x text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form th:action="@{/admin/categories/add}" method="post" class="row g-3">
-                        <div class="col-md-6">
-                            <label for="name" class="form-label">Tên danh mục</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card category-card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Tổng sản phẩm
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <span th:text="${totalProducts}">0</span>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-box fa-2x text-success"></i>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> Thêm danh mục
-                            </button>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card category-card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Danh mục có nhiều SP nhất
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${mostProductsCategoryName} ?: 'N/A'"></div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-crown fa-2x text-warning"></i>
+                                </div>
+                            </div>
                         </div>
-                    </form>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card category-card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Trung bình SP/danh mục
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <span th:text="${averageProductsPerCategory}">0</span>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-chart-bar fa-2x text-info"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Categories Table -->
-            <div class="card">
+            <div class="card category-card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Danh sách danh mục</h5>
+                    <h5 class="card-title mb-0 fw-bold">
+                        <i class="fas fa-list me-2"></i>Danh sách danh mục
+                        <span class="badge bg-white text-primary ms-2" th:text="${categories.size()}">0</span>
+                    </h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <thead class="table-dark">
+                        <table class="table category-table table-hover" id="categoriesTable">
+                            <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Tên danh mục</th>
-                                <th>Số sản phẩm</th>
-                                <th>Hành động</th>
+                                <th width="60">ID</th>
+                                <th>Danh mục</th>
+                                <th width="150">Số sản phẩm</th>
+                                <th width="150">Trạng thái</th>
+                                <th width="160" class="text-center">Hành động</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="category : ${categories}">
-                                <td th:text="${category.id}"></td>
-                                <td th:text="${category.name}"></td>
+                            <!-- Example Category 1 -->
+                            <tr>
+                                <td class="fw-bold">#001</td>
                                 <td>
-                                    <span class="badge bg-primary" th:text="${category.products != null ? category.products.size() : 0}"></span>
+                                    <div class="d-flex align-items-center">
+                                        <div class="category-icon">
+                                            <i class="fas fa-running"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold">Giày thể thao</div>
+                                            <small class="text-muted">Danh mục giày thể thao đa dạng</small>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td>
-                                    <a th:href="@{/admin/categories/delete/{id}(id=${category.id})}"
-                                       class="btn btn-danger btn-sm"
-                                       onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?')">
-                                        <i class="fas fa-trash"></i> Xóa
-                                    </a>
+                                    <span class="product-count-badge">45 sản phẩm</span>
+                                </td>
+                                <td>
+                                        <span class="category-badge">
+                                            <i class="fas fa-check-circle me-1"></i>Đang hoạt động
+                                        </span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group-custom">
+                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editCategoryModal">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Example Category 2 -->
+                            <tr>
+                                <td class="fw-bold">#002</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="category-icon">
+                                            <i class="fas fa-tshirt"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold">Thời trang</div>
+                                            <small class="text-muted">Quần áo và phụ kiện thời trang</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="product-count-badge">28 sản phẩm</span>
+                                </td>
+                                <td>
+                                        <span class="category-badge">
+                                            <i class="fas fa-check-circle me-1"></i>Đang hoạt động
+                                        </span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group-custom">
+                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editCategoryModal">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Example Category 3 -->
+                            <tr>
+                                <td class="fw-bold">#003</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="category-icon">
+                                            <i class="fas fa-laptop"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold">Điện tử</div>
+                                            <small class="text-muted">Thiết bị điện tử và công nghệ</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="product-count-badge">32 sản phẩm</span>
+                                </td>
+                                <td>
+                                        <span class="category-badge">
+                                            <i class="fas fa-check-circle me-1"></i>Đang hoạt động
+                                        </span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group-custom">
+                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editCategoryModal">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Example Category 4 -->
+                            <tr>
+                                <td class="fw-bold">#004</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="category-icon">
+                                            <i class="fas fa-home"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold">Nội thất</div>
+                                            <small class="text-muted">Đồ dùng nội thất gia đình</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="product-count-badge">18 sản phẩm</span>
+                                </td>
+                                <td>
+                                        <span class="category-badge bg-warning text-warning">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>Hạn chế
+                                        </span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group-custom">
+                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editCategoryModal">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                             </tbody>
@@ -124,10 +493,181 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Empty State (if no categories) -->
+            <div th:if="${categories.empty}" class="empty-state">
+                <i class="fas fa-tags"></i>
+                <h4 class="mb-3">Chưa có danh mục nào</h4>
+                <p class="text-muted mb-4">Bắt đầu bằng cách thêm danh mục đầu tiên của bạn</p>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                    <i class="fas fa-plus me-2"></i>Thêm danh mục đầu tiên
+                </button>
+            </div>
         </main>
     </div>
 </div>
 
+<!-- Add Category Modal -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-plus-circle me-2"></i>Thêm danh mục mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/admin/categories/add}" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label fw-bold">Tên danh mục</label>
+                        <input type="text" class="form-control" id="categoryName" name="name" required placeholder="Nhập tên danh mục">
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryDescription" class="form-label fw-bold">Mô tả</label>
+                        <textarea class="form-control" id="categoryDescription" name="description" rows="3" placeholder="Mô tả về danh mục này"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryIcon" class="form-label fw-bold">Icon</label>
+                        <select class="form-select" id="categoryIcon" name="icon">
+                            <option value="fa-tag">Thẻ (fa-tag)</option>
+                            <option value="fa-box">Hộp (fa-box)</option>
+                            <option value="fa-tshirt">Áo (fa-tshirt)</option>
+                            <option value="fa-laptop">Laptop (fa-laptop)</option>
+                            <option value="fa-home">Nhà (fa-home)</option>
+                            <option value="fa-running">Chạy (fa-running)</option>
+                            <option value="fa-mobile">Điện thoại (fa-mobile)</option>
+                            <option value="fa-book">Sách (fa-book)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Trạng thái</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="status" id="statusActive" value="active" checked>
+                                <label class="form-check-label" for="statusActive">Đang hoạt động</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="status" id="statusInactive" value="inactive">
+                                <label class="form-check-label" for="statusInactive">Ngừng hoạt động</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Thêm danh mục</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Category Modal -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Chỉnh sửa danh mục</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editCategoryName" class="form-label fw-bold">Tên danh mục</label>
+                        <input type="text" class="form-control" id="editCategoryName" value="Giày thể thao" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCategoryDescription" class="form-label fw-bold">Mô tả</label>
+                        <textarea class="form-control" id="editCategoryDescription" rows="3">Danh mục giày thể thao đa dạng</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa danh mục này?</p>
+                <p class="text-muted small">Tất cả sản phẩm trong danh mục này sẽ được chuyển sang danh mục mặc định. Hành động này không thể hoàn tác.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger">Xóa danh mục</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Initialize DataTable
+        $('#categoriesTable').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json'
+            },
+            pageLength: 10,
+            responsive: true,
+            order: [[0, 'desc']],
+            columnDefs: [
+                { orderable: false, targets: [4] }
+            ]
+        });
+
+        // Form submission handling
+        $('form').on('submit', function(e) {
+            e.preventDefault();
+            // In real app, submit via AJAX
+            alert('Thêm/chỉnh sửa danh mục thành công!');
+            $('#addCategoryModal, #editCategoryModal').modal('hide');
+        });
+
+        // Edit modal data population
+        $('#editCategoryModal').on('show.bs.modal', function(event) {
+            const button = $(event.relatedTarget);
+            const row = button.closest('tr');
+            const name = row.find('td:nth-child(2) .fw-bold').text();
+            const description = row.find('td:nth-child(2) .text-muted').text();
+
+            $('#editCategoryName').val(name);
+            $('#editCategoryDescription').val(description);
+        });
+
+        // Delete confirmation with category name
+        $('#deleteModal').on('show.bs.modal', function(event) {
+            const button = $(event.relatedTarget);
+            const row = button.closest('tr');
+            const categoryName = row.find('td:nth-child(2) .fw-bold').text();
+
+            $(this).find('.modal-body p:first').text(
+                `Bạn có chắc chắn muốn xóa danh mục "${categoryName}"?`
+            );
+        });
+
+        // Hover effect on category rows
+        $('#categoriesTable tbody tr').hover(
+            function() {
+                $(this).css('transform', 'translateX(5px)');
+            },
+            function() {
+                $(this).css('transform', 'translateX(0)');
+            }
+        );
+    });
+</script>
 </body>
 </html>

@@ -60,7 +60,7 @@ public class AdminController {
     }
 
     @GetMapping("")
-    public String adminHome(HttpSession session) {
+    public String adminHome(HttpSession session, Model model) {
         System.out.println("=== 🏠 TRANG CHỦ ADMIN ===");
         return "redirect:/admin/dashboard";
     }
@@ -96,9 +96,10 @@ public class AdminController {
             model.addAttribute("totalOrders", 25);
             model.addAttribute("totalCategories", 5);
             model.addAttribute("currentUser", currentUser);
+            model.addAttribute("activeMenu", "dashboard");
 
-            System.out.println("🎉 TRẢ VỀ TEMPLATE: admin/index");
-            return "admin/index";
+            System.out.println("🎉 TRẢ VỀ TEMPLATE: admin/dashboard");
+            return "admin/dashboard";
         } catch (Exception e) {
             System.out.println("❌ LỖI: " + e.getMessage());
             e.printStackTrace();
@@ -174,9 +175,11 @@ public class AdminController {
             List<Category> categories = categoryService.getAllCategories();
             model.addAttribute("products", products);
             model.addAttribute("categories", categories);
+            model.addAttribute("activeMenu", "products");
             return "admin/products";
         } catch (Exception e) {
             model.addAttribute("error", "Lỗi khi tải sản phẩm: " + e.getMessage());
+            model.addAttribute("activeMenu", "products");
             return "admin/products";
         }
     }
@@ -188,6 +191,7 @@ public class AdminController {
         }
         model.addAttribute("product", new Product());
         model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("activeMenu", "products");
         return "admin/add-product";
     }
 
@@ -209,6 +213,7 @@ public class AdminController {
         if (product.isPresent()) {
             model.addAttribute("product", product.get());
             model.addAttribute("categories", categoryService.getAllCategories());
+            model.addAttribute("activeMenu", "products");
             return "admin/edit-product";
         }
         return "redirect:/admin/products";
@@ -241,6 +246,7 @@ public class AdminController {
         }
         List<User> users = userService.getAllUsers();
         model.addAttribute("users", users);
+        model.addAttribute("activeMenu", "users");
         return "admin/users";
     }
 
@@ -252,6 +258,7 @@ public class AdminController {
         Optional<User> user = userService.getUserByIdOptional(id);
         if (user.isPresent()) {
             model.addAttribute("user", user.get());
+            model.addAttribute("activeMenu", "users");
             return "admin/edit-user";
         }
         return "redirect:/admin/users";
@@ -288,6 +295,7 @@ public class AdminController {
         model.addAttribute("orders", orders);
         model.addAttribute("pendingCount", pendingCount);
         model.addAttribute("completedCount", completedCount);
+        model.addAttribute("activeMenu", "orders");
         return "admin/orders";
     }
 
@@ -299,6 +307,7 @@ public class AdminController {
         Optional<Order> order = orderService.getOrderByIdOptional(id);
         if (order.isPresent()) {
             model.addAttribute("order", order.get());
+            model.addAttribute("activeMenu", "orders");
             return "admin/order-detail";
         }
         return "redirect:/admin/orders";
@@ -321,6 +330,7 @@ public class AdminController {
         }
         List<Category> categories = categoryService.getAllCategories();
         model.addAttribute("categories", categories);
+        model.addAttribute("activeMenu", "categories");
         return "admin/categories";
     }
 
@@ -344,7 +354,7 @@ public class AdminController {
         return "redirect:/admin/categories";
     }
 
-    // QUẢN LÝ ĐÁNH GIÁ
+    // QUẢN LÝ ĐÁNH GIÁ - SỬA THÀNH POST METHOD
     @GetMapping("/reviews")
     public String manageReviews(HttpSession session, Model model) {
         if (!checkAdmin(session, model)) {
@@ -352,15 +362,21 @@ public class AdminController {
         }
         List<Review> reviews = reviewService.getAllReviews();
         model.addAttribute("reviews", reviews);
+        model.addAttribute("activeMenu", "reviews");
         return "admin/reviews";
     }
 
-    @GetMapping("/reviews/delete/{id}")
-    public String deleteReview(HttpSession session, @PathVariable Long id) {
+    @PostMapping("/reviews/delete/{id}")
+    public String deleteReview(HttpSession session, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         if (!checkAdmin(session, new org.springframework.ui.ExtendedModelMap())) {
             return "redirect:/users/login";
         }
-        reviewService.deleteReview(id);
+        try {
+            reviewService.deleteReview(id);
+            redirectAttributes.addFlashAttribute("success", "Xóa đánh giá thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Lỗi khi xóa đánh giá: " + e.getMessage());
+        }
         return "redirect:/admin/reviews";
     }
 }

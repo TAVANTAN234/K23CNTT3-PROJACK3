@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - Sneaker Shop'">Sneaker Shop</title>
+    <!-- CSS links -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<!-- NAVIGATION BAR -->
+<header>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a th:href="@{/}">Sneaker Shop</a>
+        </div>
+        <ul class="nav-menu">
+            <li><a th:href="@{/}">Trang chủ</a></li>
+            <li><a th:href="@{/products}">Sản phẩm</a></li>
+            <li><a th:href="@{/cart}">Giỏ hàng <span th:text="${cartCount != null ? '(' + cartCount + ')' : ''}"></span></a></li>
+
+            <!-- HIỂN THỊ TÊN NGƯỜI DÙNG HOẶC NÚT ĐĂNG NHẬP -->
+            <li th:if="${session.currentUser != null}">
+                <div class="user-dropdown">
+                        <span class="user-greeting">
+                            Xin chào, <strong th:text="${session.currentUser.name}">User</strong>
+                        </span>
+                    <div class="dropdown-content">
+                        <a th:href="@{/users/profile}">Hồ sơ</a>
+                        <a th:href="@{/admin/dashboard}" th:if="${session.currentUser.role.name() == 'ADMIN'}">Admin</a>
+                        <a th:href="@{/users/logout}" style="color: #ff4444;">Đăng xuất</a>
+                    </div>
+                </div>
+            </li>
+
+            <li th:unless="${session.currentUser != null}">
+                <a th:href="@{/users/login}" class="login-btn">Đăng nhập</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<!-- DEBUG INFO (Có thể ẩn đi sau khi test) -->
+<div style="background: #f5f5f5; padding: 5px 10px; margin: 5px 0; border-left: 3px solid #007bff; font-size: 12px;">
+    <strong>Debug:</strong>
+    Session User: <span th:text="${session.currentUser != null ? session.currentUser.name : 'Không có'}"></span> |
+    Session ID: <span th:text="${session.id}"></span>
+</div>
+
+<!-- MAIN CONTENT -->
+<main>
+    <div th:insert="${content}"></div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+    <p>&copy; 2024 Sneaker Shop. All rights reserved.</p>
+</footer>
+
+<!-- JavaScript -->
+<script>
+    // JavaScript cho dropdown
+    document.addEventListener('DOMContentLoaded', function() {
+        const userDropdown = document.querySelector('.user-dropdown');
+        if (userDropdown) {
+            userDropdown.addEventListener('click', function(e) {
+                const dropdown = this.querySelector('.dropdown-content');
+                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+            });
+
+            // Đóng dropdown khi click ra ngoài
+            document.addEventListener('click', function(e) {
+                if (!userDropdown.contains(e.target)) {
+                    const dropdown = userDropdown.querySelector('.dropdown-content');
+                    dropdown.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

@@ -379,6 +379,15 @@
     </style>
 </head>
 <body>
+<!-- DEBUG INFO - Có thể xóa sau khi kiểm tra -->
+<div style="position: fixed; top: 10px; right: 10px; background: #f8f9fa;
+            padding: 10px; border-radius: 5px; font-size: 12px; z-index: 9999;">
+    <strong>Debug:</strong>
+    <span th:if="${session.currentUser != null}">
+        ✅ Đã login: <span th:text="${session.currentUser.name}"></span>
+    </span>
+</div>
+
 <div class="login-container">
     <div class="login-card">
         <div class="login-header">
